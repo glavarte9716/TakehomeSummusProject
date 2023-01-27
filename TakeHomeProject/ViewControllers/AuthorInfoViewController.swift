@@ -7,15 +7,20 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 import Combine
 
+/// View Model for populating the `AuthorInfoViewController`.
 struct AuthorInfoViewModel {
     let photos: [Photo]
     let author: Author
 }
 
+/// View controller responsible for the post author's information.
 class AuthorInfoViewController: UIViewController {
     // MARK: - Properties
+
+    // Signal used to pass information from the upstream service.
     let authorsViewControllerSignal = CurrentValueSubject<AuthorInfoViewModel?, Never>.init(nil)
     var viewModel: AuthorInfoViewModel?
     var authorInfoPageManager: AuthorInfoPageManager?
@@ -24,14 +29,42 @@ class AuthorInfoViewController: UIViewController {
     // MARK: - UI Elements
     private var collectionView: UICollectionView?
     
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         authorInfoPageManager = AuthorInfoPageManager(authorViewControllerSignal: authorsViewControllerSignal)
         setupSubscription()
+        
         if let id = authorsViewControllerSignal.value?.author.authorId {
             authorInfoPageManager?.fetchPhotosForAuthorId(id: String(id))
         }
         
+        setupUI()
+    }
+    
+    // MARK: - Instance Methods
+    /// Sets up the subscription for the current value subject that receives the upstream data.
+    func setupSubscription() {
+        observations.removeAll()
+        
+        authorsViewControllerSignal.sink(receiveValue: { [weak self] model in
+            guard let self = self, let model = model else { return }
+            self.configureWithModel(model: model)
+        }).store(in: &observations)
+    }
+    
+    /// Configure the screen with the view model.
+    /// - Parameter model: Model for filling out the '`AuthorInfoViewController`.
+    func configureWithModel(model: AuthorInfoViewModel) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.viewModel = model
+            self.collectionView?.reloadData()
+        }
+    }
+    
+    /// Helper for performing all the UI layout.
+    func setupUI() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 1
@@ -54,29 +87,10 @@ class AuthorInfoViewController: UIViewController {
         collectionView.frame = view.bounds
     }
     
-    func setupSubscription() {
-        observations.removeAll()
-        
-        authorsViewControllerSignal.sink(receiveValue: { [weak self] model in
-            guard let self = self, let model = model else { return }
-            self.configureWithModel(model: model)
-        }).store(in: &observations)
-    }
-    
-    /// Configure the screen with the view model.
-    /// - Parameter model: Model for filling out the '`AuthorInfoViewController`.
-    func configureWithModel(model: AuthorInfoViewModel) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.viewModel = model
-            self.collectionView?.reloadData()
-        }
-    }
-
-    
 }
 
-extension AuthorInfoViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+// MARK: - CollectionView Data Source and Delegate
+extension AuthorInfoViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return viewModel?.photos.count ?? 0
     }
@@ -86,7 +100,6 @@ extension AuthorInfoViewController: UICollectionViewDataSource, UICollectionView
                 AuthorPhotoCollectionViewCell ,
               let photo = viewModel?.photos[safe: indexPath.row] else {
             let cell = UICollectionViewCell()
-            cell.backgroundColor = .systemBlue
             return cell
         }
         cell.configurePhotoCell(model: .init(photo: photo))
@@ -100,22 +113,8 @@ extension AuthorInfoViewController: UICollectionViewDataSource, UICollectionView
             return UICollectionReusableView()
         }
         if let viewModel = self.viewModel {
-            headerView.configureWithModel(model: viewModel)
+            headerView.configureHeader(with: viewModel.author)
         }
         return headerView
     }
-//
-//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-//        // Get the view for the first header
-//        let indexPath = IndexPath(row: 0, section: section)
-//        let headerView = self.collectionView(collectionView, viewForSupplementaryElementOfKind: UICollectionView.elementKindSectionHeader, at: indexPath)
-//
-//        headerView.translatesAutoresizingMaskIntoConstraints = false
-//        headerView.widthAnchor.constraint(equalToConstant: collectionView.frame.width).isActive = true
-//        return headerView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
-////            // Use this view to calculate the optimal size based on the collection view's width
-////            return headerView.systemLayoutSizeFitting(CGSize(width: collectionView.frame.width, height: UIView.layoutFittingExpandedSize.height),
-////                                                      withHorizontalFittingPriority: .required, // Width is fixed
-////                                                      verticalFittingPriority: .fittingSizeLevel) // Height can be as large as needed
-//    }
 }

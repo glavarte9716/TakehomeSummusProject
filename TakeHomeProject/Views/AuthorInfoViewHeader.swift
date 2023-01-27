@@ -34,19 +34,18 @@ class AuthorInfoViewHeader: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureWithModel(model: AuthorInfoViewModel) {
-        usernameValue.text = model.author.username
-        fullNameValue.text = model.author.name
-        emailValue.text = model.author.email
-        phoneValue.text = model.author.phone
-        websiteValue.text = model.author.website
-        companyValue.text = model.author.company.companyName
+    /// Upon receiving the data for the
+    /// - Parameter model: View model with author data used to fill out the screen.
+    func configureHeader(with author: Author) {
+        usernameValue.text = author.username
+        fullNameValue.text = author.name
+        emailValue.text = author.email
+        phoneValue.text = author.phone
+        websiteValue.text = author.website
+        companyValue.text = author.company.companyName
     }
-    
-    func setupStack() {
-        
-    }
-    
+
+    /// Performs all the setup for UI Layout.
     private func setupUI() {
         usernameTitle.text = NSLocalizedString("Username:", comment: "Username")
         fullNameTitle.text = NSLocalizedString("FullName:", comment: "Full Name")

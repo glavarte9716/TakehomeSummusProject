@@ -27,6 +27,7 @@ struct HomeViewModel {
 class HomeViewController: UIViewController {
 
     // MARK: - Properties
+    // Signal used to pass information from the upstream service.
     let homeViewControllerSignal = CurrentValueSubject<HomeViewModel, Never>.init(.init(posts: [], authors: []))
     var homePageManager: HomePageManager?
     var viewModel: HomeViewModel?
@@ -43,14 +44,12 @@ class HomeViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.navigationBar.topItem?.title = NSLocalizedString("Takehome", comment: "Name of the project")
+        setupUI()
         homePageManager = HomePageManager(homeViewControllerSignal: homeViewControllerSignal)
         setupSubscription()
         homePageManager?.fetchHomePageData()
-        self.view.backgroundColor = .systemBlue
         tableView.delegate = self
         tableView.dataSource = self
-        setupUI()
     }
     
     override func viewDidLayoutSubviews() {
@@ -61,6 +60,7 @@ class HomeViewController: UIViewController {
     // MARK: - Instance Methods
     /// Initiate function that sets up the UI for the TableView.
     func setupUI() {
+        navigationController?.navigationBar.topItem?.title = NSLocalizedString("Takehome", comment: "Name of the project")
         self.view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -71,6 +71,7 @@ class HomeViewController: UIViewController {
         ])
     }
     
+    /// Sets up the subscription for the current value subject that receives the upstream data.
     func setupSubscription() {
         observations.removeAll()
         homeViewControllerSignal.dropFirst().sink(receiveValue: { [weak self] viewModel in
@@ -92,6 +93,7 @@ class HomeViewController: UIViewController {
     }
 }
 
+// MARK: - TableView Data Source and Delegate
 extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let viewModel = viewModel,

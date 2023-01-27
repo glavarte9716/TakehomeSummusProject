@@ -8,15 +8,19 @@
 import Foundation
 import UIKit
 
+/// View model for each photo cell in the list of author's photo.
 struct AuthorPhotoCollectionCellViewModel {
     let photo: Photo
 }
 
+/// Collection view cell for an author's photo to be shown..
 class AuthorPhotoCollectionViewCell: UICollectionViewCell {
     
+    // MARK: - Properties
     static let identifier = "PhotoCollectionViewCell"
     private let myImageView = UIImageView()
     
+    // MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -26,6 +30,7 @@ class AuthorPhotoCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    /// Function sets up the UI.
     private func setupUI() {
         contentView.addSubview(myImageView)
         
@@ -38,7 +43,9 @@ class AuthorPhotoCollectionViewCell: UICollectionViewCell {
             myImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
         ])
     }
-
+    
+    /// Configuration function that loads up the cell's image.
+    /// - Parameter model: View model that contains the photo data.
     func configurePhotoCell(model: AuthorPhotoCollectionCellViewModel) {
         setImage(from: model.photo.photoUrl)
     }

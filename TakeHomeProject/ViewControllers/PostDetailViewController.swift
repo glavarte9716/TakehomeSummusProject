@@ -9,12 +9,14 @@ import Foundation
 import UIKit
 import Combine
 
+/// View model for the `PostDetailViewController`.
 struct PostDetailViewModel {
     let comments: [Comment]
     let post: Post
     let author: Author
 }
 
+/// View controller for the detail screen pushed on after selection a post.
 class PostDetailViewController: UIViewController {
     // MARK: - Properties
     let detailViewSignal = CurrentValueSubject<PostDetailViewModel?, Never>.init(nil)
@@ -74,6 +76,8 @@ class PostDetailViewController: UIViewController {
         ])
     }
     
+    /// Configure the screen with the view model
+    /// - Parameter model: view model of the screen which should contain all the data for the list of comments, the author, as well as the post details.
     func configureWithModel(model: PostDetailViewModel) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
@@ -83,6 +87,7 @@ class PostDetailViewController: UIViewController {
     }   
 }
 
+// MARK: - TableView Data Source and Delegate
 extension PostDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let viewModel = viewModel else { return 0 }
