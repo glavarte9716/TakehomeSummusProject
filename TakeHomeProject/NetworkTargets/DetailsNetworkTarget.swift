@@ -8,17 +8,20 @@
 import Foundation
 import Combine
 
+/// Object responsible for fetching network data for post details page.
 class DetailsNetworkTarget {
-    let baseUrl = "https://jsonplaceholder.typicode.com/"
+    
+    // MARK: - Properties
     let commentsSignal: CurrentValueSubject<[Comment], Never>
     
     init(commentsSignal: CurrentValueSubject<[Comment], Never>) {
         self.commentsSignal = commentsSignal
     }
     
+    // MARK: - Instance Methods
     /// Fetches the comments for a specific posts
     public func fetchCommentData(id: String) {
-        guard let url = URL(string: "\(baseUrl)comments?postId=\(id)") else { return }
+        guard let url = URL(string: "\(String.baseNetworkURL)comments?postId=\(id)") else { return }
         let urlSession = URLSession(configuration: .default)
         
         urlSession.dataTask(with: url) { [weak self] (data, response, error) in

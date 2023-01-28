@@ -10,19 +10,21 @@ import Combine
 
 /// Manager responsible for handling communication with the backend and the viewModel.
 class HomePageManager {
+    
     // MARK: - Properties
     let postsSignal = CurrentValueSubject<[Post], Never>.init([])
     let authorsSignal =  CurrentValueSubject<[Author], Never>.init([])
     let homeViewControllerSignal: CurrentValueSubject<HomeViewModel, Never>
-    let networkTarget: NetworkTarget
+    let networkTarget: HomeNetworkTarget
     var observations = Set<AnyCancellable>()
     
     init(homeViewControllerSignal: CurrentValueSubject<HomeViewModel, Never>) {
-        networkTarget = NetworkTarget(postsSignal: postsSignal, authorsSignal: authorsSignal)
+        networkTarget = HomeNetworkTarget(postsSignal: postsSignal, authorsSignal: authorsSignal)
         self.homeViewControllerSignal = homeViewControllerSignal
         subscribeToSignals()
     }
     
+    // MARK: - Instance Methods
     /// We need to fetch the posts and the list of authors to populate the first page.
     func fetchHomePageData() {
         networkTarget.fetchPostData()

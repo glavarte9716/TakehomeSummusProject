@@ -8,9 +8,10 @@
 import Foundation
 import Combine
 
-/// Object responsible for fetching network data.
-class NetworkTarget {
-    let baseUrl = "https://jsonplaceholder.typicode.com/"
+/// Object responsible for fetching network data for home page.
+class HomeNetworkTarget {
+    
+    // MARK: - Properties
     let postsSignal: CurrentValueSubject<[Post], Never>
     let authorsSignal:  CurrentValueSubject<[Author], Never>
     
@@ -19,9 +20,10 @@ class NetworkTarget {
         self.authorsSignal = authorsSignal
     }
     
+    // MARK: - Instance Methods
     /// Function for retrieving the post data from the API.
     public func fetchPostData() {
-        guard let url = URL(string: "\(baseUrl)posts") else { return }
+        guard let url = URL(string: "\(String.baseNetworkURL)posts") else { return }
         let urlSession = URLSession(configuration: .default)
         
         urlSession.dataTask(with: url) { [weak self] (data, response, error) in
@@ -37,7 +39,7 @@ class NetworkTarget {
     
     /// Function for retrieving the author data from the API.
     public func fetchAuthorData() {
-        guard let url = URL(string: "\(baseUrl)users") else { return }
+        guard let url = URL(string: "\(String.baseNetworkURL)users") else { return }
         let urlSession = URLSession(configuration: .default)
         
         urlSession.dataTask(with: url) { [weak self] (data, response, error) in

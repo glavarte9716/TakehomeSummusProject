@@ -29,3 +29,7 @@ extension UIStackView {
         }
     }
 }
+
+extension String {
+    static let baseNetworkURL = "https://jsonplaceholder.typicode.com/"
+}

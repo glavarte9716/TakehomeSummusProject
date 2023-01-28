@@ -18,8 +18,8 @@ struct AuthorInfoViewModel {
 
 /// View controller responsible for the post author's information.
 class AuthorInfoViewController: UIViewController {
-    // MARK: - Properties
 
+    // MARK: - Properties
     // Signal used to pass information from the upstream service.
     let authorsViewControllerSignal = CurrentValueSubject<AuthorInfoViewModel?, Never>.init(nil)
     var viewModel: AuthorInfoViewModel?
@@ -75,7 +75,7 @@ class AuthorInfoViewController: UIViewController {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         guard let collectionView = collectionView else { return }
         view.addSubview(collectionView)
-        layout.headerReferenceSize = .init(width: view.bounds.width, height: 285)
+        layout.headerReferenceSize = .init(width: view.bounds.width, height: 300)
         collectionView.register(AuthorPhotoCollectionViewCell.self, forCellWithReuseIdentifier: AuthorPhotoCollectionViewCell.identifier)
         collectionView.register(AuthorInfoViewHeader.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
@@ -112,9 +112,17 @@ extension AuthorInfoViewController: UICollectionViewDataSource, UICollectionView
                                                                                for: indexPath) as? AuthorInfoViewHeader else {
             return UICollectionReusableView()
         }
-        if let viewModel = self.viewModel {
-            headerView.configureHeader(with: viewModel.author)
-        }
+        let hostingController = UIHostingController(rootView: SwiftUIHeaderSection(author: viewModel?.author))
+        addChild(hostingController)
+
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        headerView.addSubview(hostingController.view)
+        NSLayoutConstraint.activate([
+            hostingController.view.topAnchor.constraint(equalTo: headerView.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: headerView.bottomAnchor),
+            hostingController.view.leadingAnchor.constraint(equalTo: headerView.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -150),
+        ])
         return headerView
     }
 }

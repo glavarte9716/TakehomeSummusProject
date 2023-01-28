@@ -8,8 +8,10 @@
 import Foundation
 import Combine
 
+/// Object responsible for fetching network data for post details page.
 class AuthorPhotosNetworkTarget {
-    let baseUrl = "https://jsonplaceholder.typicode.com/"
+    
+    // MARK: - Properties
     let photosSignal: CurrentValueSubject<[Photo], Never>
     let albumsSignal: CurrentValueSubject<[Album], Never>
     
@@ -18,9 +20,10 @@ class AuthorPhotosNetworkTarget {
         self.albumsSignal = albumsSignal
     }
     
+    // MARK: - Instance Methods
     /// Fetches the albums for a specific author that we will use to filter out the photos results
     public func fetchAlbumsForGivenAuthor(id: String) {
-        guard let url = URL(string: "\(baseUrl)albums?userId=\(id)") else { return }
+        guard let url = URL(string: "\(String.baseNetworkURL)albums?userId=\(id)") else { return }
         let urlSession = URLSession(configuration: .default)
         
         urlSession.dataTask(with: url) { [weak self] (data, response, error) in
@@ -31,8 +34,9 @@ class AuthorPhotosNetworkTarget {
         }.resume()
     }
     
+    /// Fetches all the photos for all users from the API.
     public func fetchAllPhotos() {
-        guard let url = URL(string: "\(baseUrl)photos") else { return }
+        guard let url = URL(string: "\(String.baseNetworkURL)photos") else { return }
         let urlSession = URLSession(configuration: .default)
         
         urlSession.dataTask(with: url) { [weak self] (data, response, error) in

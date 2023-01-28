@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+/// Manager for the Author information page.
 class AuthorInfoPageManager {
     
     // MARK: - Properties
@@ -23,6 +24,7 @@ class AuthorInfoPageManager {
         subscribeToSignals()
     }
     
+    // MARK: - Instance Methods
     /// We need to fetch the posts and the list of authors to populate the first page.
     func fetchPhotosForAuthorId(id: String) {
         networkTarget.fetchAlbumsForGivenAuthor(id: id)

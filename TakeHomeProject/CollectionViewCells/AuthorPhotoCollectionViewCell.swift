@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 
 /// View model for each photo cell in the list of author's photo.
 struct AuthorPhotoCollectionCellViewModel {

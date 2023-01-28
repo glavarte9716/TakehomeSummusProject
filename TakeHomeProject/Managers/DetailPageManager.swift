@@ -10,6 +10,7 @@ import Combine
 
 /// Manager responsible for handling communication with the backend and the viewModel.
 class DetailPageManager {
+    
     // MARK: - Properties
     let commentsSignal = CurrentValueSubject<[Comment], Never>.init([])
     let detailControllerSignal: CurrentValueSubject<PostDetailViewModel?, Never>
@@ -22,6 +23,7 @@ class DetailPageManager {
         subscribeToSignals()
     }
     
+    // MARK: - Instance Methods
     /// We need to fetch the posts and the list of authors to populate the first page.
     func fetchDetailPageData(id: String) {
         networkTarget.fetchCommentData(id: id)

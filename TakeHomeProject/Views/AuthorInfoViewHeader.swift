@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 
+// Header view for the Author information. This view is doing nothing now that the SwiftUIView is laying on top of it.
 class AuthorInfoViewHeader: UICollectionReusableView {
     
     static let identifier = "AuthorInfoViewHeader"
