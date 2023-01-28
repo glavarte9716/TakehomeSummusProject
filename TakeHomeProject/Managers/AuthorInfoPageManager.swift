@@ -12,11 +12,11 @@ import Combine
 class AuthorInfoPageManager {
     
     // MARK: - Properties
-    let photosSignal = CurrentValueSubject<[Photo], Never>.init([])
-    let albumsSignal = CurrentValueSubject<[Album], Never>.init([])
+    private let photosSignal = CurrentValueSubject<[Photo], Never>.init([])
+    private let albumsSignal = CurrentValueSubject<[Album], Never>.init([])
+    private let networkTarget: AuthorPhotosNetworkTarget
+    private var observations = Set<AnyCancellable>()
     let authorViewControllerSignal: CurrentValueSubject<AuthorInfoViewModel?, Never>
-    let networkTarget: AuthorPhotosNetworkTarget
-    var observations = Set<AnyCancellable>()
     
     init(authorViewControllerSignal: CurrentValueSubject<AuthorInfoViewModel?, Never>) {
         networkTarget = AuthorPhotosNetworkTarget(photosSignal: photosSignal, albumsSignal: albumsSignal)
@@ -31,7 +31,7 @@ class AuthorInfoPageManager {
     }
 
     /// Update the viewModel with the posts and the Authors.
-    func subscribeToSignals() {
+    private func subscribeToSignals() {
         observations.removeAll()
         
         albumsSignal.dropFirst().sink(receiveValue: { [weak self] albums in

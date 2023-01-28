@@ -20,8 +20,8 @@ struct PostDetailViewModel {
 class PostDetailViewController: UIViewController {
     // MARK: - Properties
     var detailPageManager: DetailPageManager = DetailPageManager(detailControllerSignal: .init(nil))
-    var viewModel: PostDetailViewModel?
-    var observations = Set<AnyCancellable>()
+    private var viewModel: PostDetailViewModel?
+    private var observations = Set<AnyCancellable>()
     
     // MARK: - UIComponents
     private let tableView: UITableView = {
@@ -46,13 +46,18 @@ class PostDetailViewController: UIViewController {
         setupUI()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tableView.deselectSelectedRow(animated: false)
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
     }
     
     // MARK: - Instance Methods
-    func setupSubscription() {
+    private func setupSubscription() {
         observations.removeAll()
         detailPageManager.detailControllerSignal.dropFirst().sink(receiveValue: { [weak self] viewModel in
             guard let self = self,
@@ -63,7 +68,7 @@ class PostDetailViewController: UIViewController {
     }
     
     /// Sets up the UI elements for the Post Detail Screen
-    func setupUI() {
+    private func setupUI() {
         self.view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -76,7 +81,7 @@ class PostDetailViewController: UIViewController {
     
     /// Configure the screen with the view model
     /// - Parameter model: view model of the screen which should contain all the data for the list of comments, the author, as well as the post details.
-    func configureWithModel(model: PostDetailViewModel) {
+    private func configureWithModel(model: PostDetailViewModel) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.viewModel = model

@@ -21,9 +21,9 @@ class AuthorInfoViewController: UIViewController {
 
     // MARK: - Properties
     // Signal used to pass information from the upstream service.
-    var viewModel: AuthorInfoViewModel?
+    private var viewModel: AuthorInfoViewModel?
     var authorInfoPageManager: AuthorInfoPageManager = AuthorInfoPageManager(authorViewControllerSignal: .init(nil))
-    var observations = Set<AnyCancellable>()
+    private var observations = Set<AnyCancellable>()
     
     // MARK: - UI Elements
     private var collectionView: UICollectionView?
@@ -42,7 +42,7 @@ class AuthorInfoViewController: UIViewController {
     
     // MARK: - Instance Methods
     /// Sets up the subscription for the current value subject that receives the upstream data.
-    func setupSubscription() {
+    private func setupSubscription() {
         observations.removeAll()
         
         authorInfoPageManager.authorViewControllerSignal.sink(receiveValue: { [weak self] model in
@@ -53,7 +53,7 @@ class AuthorInfoViewController: UIViewController {
     
     /// Configure the screen with the view model.
     /// - Parameter model: Model for filling out the '`AuthorInfoViewController`.
-    func configureWithModel(model: AuthorInfoViewModel) {
+    private func configureWithModel(model: AuthorInfoViewModel) {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             self.viewModel = model
@@ -62,7 +62,7 @@ class AuthorInfoViewController: UIViewController {
     }
     
     /// Helper for performing all the UI layout.
-    func setupUI() {
+    private func setupUI() {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 1

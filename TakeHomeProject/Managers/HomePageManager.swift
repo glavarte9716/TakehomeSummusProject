@@ -12,11 +12,11 @@ import Combine
 class HomePageManager {
     
     // MARK: - Properties
-    let postsSignal = CurrentValueSubject<[Post], Never>.init([])
-    let authorsSignal =  CurrentValueSubject<[Author], Never>.init([])
+    private let postsSignal = CurrentValueSubject<[Post], Never>.init([])
+    private let authorsSignal =  CurrentValueSubject<[Author], Never>.init([])
+    private let networkTarget: HomeNetworkTarget
+    private var observations = Set<AnyCancellable>()
     let homeViewControllerSignal: CurrentValueSubject<HomeViewModel, Never>
-    let networkTarget: HomeNetworkTarget
-    var observations = Set<AnyCancellable>()
     
     init(homeViewControllerSignal: CurrentValueSubject<HomeViewModel, Never>) {
         networkTarget = HomeNetworkTarget(postsSignal: postsSignal, authorsSignal: authorsSignal)
@@ -32,7 +32,7 @@ class HomePageManager {
     }
 
     /// Update the viewModel with the posts and the Authors.
-    func subscribeToSignals() {
+    private func subscribeToSignals() {
         postsSignal.dropFirst().sink(receiveValue: { [weak self] posts in
             guard let self = self else { return }
             let viewModel = self.homeViewControllerSignal.value

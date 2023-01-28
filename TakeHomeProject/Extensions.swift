@@ -15,6 +15,16 @@ extension Collection {
     }
 }
 
+extension UITableView {
+    /// Helper for deselecting the selected tableview row.
+    /// - Parameter animated: animated behavior.
+    func deselectSelectedRow(animated: Bool) {
+        if let indexPathForSelectedRow = self.indexPathForSelectedRow {
+            self.deselectRow(at: indexPathForSelectedRow, animated: animated)
+        }
+    }
+}
+
 extension UIStackView {
 
     /// Helper function that sets up all the stacks with the labels in the Author info header.

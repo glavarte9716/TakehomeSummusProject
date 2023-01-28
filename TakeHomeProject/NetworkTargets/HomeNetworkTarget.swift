@@ -12,8 +12,8 @@ import Combine
 class HomeNetworkTarget {
     
     // MARK: - Properties
-    let postsSignal: CurrentValueSubject<[Post], Never>
-    let authorsSignal:  CurrentValueSubject<[Author], Never>
+    private let postsSignal: CurrentValueSubject<[Post], Never>
+    private let authorsSignal:  CurrentValueSubject<[Author], Never>
     
     init(postsSignal: CurrentValueSubject<[Post], Never>, authorsSignal: CurrentValueSubject<[Author], Never>) {
         self.postsSignal = postsSignal
@@ -22,7 +22,7 @@ class HomeNetworkTarget {
     
     // MARK: - Instance Methods
     /// Function for retrieving the post data from the API.
-    public func fetchPostData() {
+    func fetchPostData() {
         guard let url = URL(string: "\(String.baseNetworkURL)posts") else { return }
         let urlSession = URLSession(configuration: .default)
         
@@ -38,7 +38,7 @@ class HomeNetworkTarget {
     }
     
     /// Function for retrieving the author data from the API.
-    public func fetchAuthorData() {
+    func fetchAuthorData() {
         guard let url = URL(string: "\(String.baseNetworkURL)users") else { return }
         let urlSession = URLSession(configuration: .default)
         

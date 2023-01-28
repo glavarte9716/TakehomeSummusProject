@@ -28,9 +28,9 @@ class HomeViewController: UIViewController {
 
     // MARK: - Properties
     // Signal used to pass information from the upstream service.
-    var homePageManager: HomePageManager?
-    var viewModel: HomeViewModel?
-    var observations = Set<AnyCancellable>()
+    private var homePageManager: HomePageManager?
+    private var viewModel: HomeViewModel?
+    private var observations = Set<AnyCancellable>()
 
     // MARK: - UIComponents
     private let tableView: UITableView = {
@@ -51,6 +51,11 @@ class HomeViewController: UIViewController {
         tableView.dataSource = self
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        tableView.deselectSelectedRow(animated: false)
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         tableView.frame = view.bounds
@@ -58,7 +63,7 @@ class HomeViewController: UIViewController {
     
     // MARK: - Instance Methods
     /// Initiate function that sets up the UI for the TableView.
-    func setupUI() {
+    private func setupUI() {
         navigationController?.navigationBar.topItem?.title = NSLocalizedString("Takehome", comment: "Name of the project")
         self.view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -71,7 +76,7 @@ class HomeViewController: UIViewController {
     }
     
     /// Sets up the subscription for the current value subject that receives the upstream data.
-    func setupSubscription() {
+    private func setupSubscription() {
         observations.removeAll()
         homePageManager?.homeViewControllerSignal.dropFirst().sink(receiveValue: { [weak self] viewModel in
             guard let self = self,

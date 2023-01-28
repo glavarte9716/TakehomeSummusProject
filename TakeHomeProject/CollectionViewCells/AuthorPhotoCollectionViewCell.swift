@@ -51,7 +51,7 @@ class AuthorPhotoCollectionViewCell: UICollectionViewCell {
         setImage(from: model.photo.photoUrl)
     }
     
-    func setImage(from url: String) {
+    private func setImage(from url: String) {
         guard let imageURL = URL(string: url) else { return }
 
         DispatchQueue.global().async {

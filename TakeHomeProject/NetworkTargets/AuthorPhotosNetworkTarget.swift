@@ -12,8 +12,8 @@ import Combine
 class AuthorPhotosNetworkTarget {
     
     // MARK: - Properties
-    let photosSignal: CurrentValueSubject<[Photo], Never>
-    let albumsSignal: CurrentValueSubject<[Album], Never>
+    private let photosSignal: CurrentValueSubject<[Photo], Never>
+    private let albumsSignal: CurrentValueSubject<[Album], Never>
     
     init(photosSignal: CurrentValueSubject<[Photo], Never>, albumsSignal: CurrentValueSubject<[Album], Never>) {
         self.photosSignal = photosSignal
@@ -22,7 +22,7 @@ class AuthorPhotosNetworkTarget {
     
     // MARK: - Instance Methods
     /// Fetches the albums for a specific author that we will use to filter out the photos results
-    public func fetchAlbumsForGivenAuthor(id: String) {
+    func fetchAlbumsForGivenAuthor(id: String) {
         guard let url = URL(string: "\(String.baseNetworkURL)albums?userId=\(id)") else { return }
         let urlSession = URLSession(configuration: .default)
         
@@ -35,7 +35,7 @@ class AuthorPhotosNetworkTarget {
     }
     
     /// Fetches all the photos for all users from the API.
-    public func fetchAllPhotos() {
+    func fetchAllPhotos() {
         guard let url = URL(string: "\(String.baseNetworkURL)photos") else { return }
         let urlSession = URLSession(configuration: .default)
         

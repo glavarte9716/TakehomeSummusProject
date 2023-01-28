@@ -12,10 +12,10 @@ import Combine
 class DetailPageManager {
     
     // MARK: - Properties
-    let commentsSignal = CurrentValueSubject<[Comment], Never>.init([])
+    private let commentsSignal = CurrentValueSubject<[Comment], Never>.init([])
+    private let networkTarget: DetailsNetworkTarget
+    private var observations = Set<AnyCancellable>()
     let detailControllerSignal: CurrentValueSubject<PostDetailViewModel?, Never>
-    let networkTarget: DetailsNetworkTarget
-    var observations = Set<AnyCancellable>()
     
     init(detailControllerSignal: CurrentValueSubject<PostDetailViewModel?, Never>) {
         networkTarget = DetailsNetworkTarget(commentsSignal: commentsSignal)
@@ -30,7 +30,7 @@ class DetailPageManager {
     }
 
     /// Update the viewModel with the posts and the Authors.
-    func subscribeToSignals() {
+    private func subscribeToSignals() {
         commentsSignal.dropFirst().sink(receiveValue: { [weak self] comments in
             guard let self = self,
                   let viewModel = self.detailControllerSignal.value else { return }

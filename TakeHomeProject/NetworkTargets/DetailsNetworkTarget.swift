@@ -12,7 +12,7 @@ import Combine
 class DetailsNetworkTarget {
     
     // MARK: - Properties
-    let commentsSignal: CurrentValueSubject<[Comment], Never>
+    private let commentsSignal: CurrentValueSubject<[Comment], Never>
     
     init(commentsSignal: CurrentValueSubject<[Comment], Never>) {
         self.commentsSignal = commentsSignal
@@ -20,7 +20,7 @@ class DetailsNetworkTarget {
     
     // MARK: - Instance Methods
     /// Fetches the comments for a specific posts
-    public func fetchCommentData(id: String) {
+    func fetchCommentData(id: String) {
         guard let url = URL(string: "\(String.baseNetworkURL)comments?postId=\(id)") else { return }
         let urlSession = URLSession(configuration: .default)
         
