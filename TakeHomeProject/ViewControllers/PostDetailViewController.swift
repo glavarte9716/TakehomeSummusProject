@@ -19,8 +19,7 @@ struct PostDetailViewModel {
 /// View controller for the detail screen pushed on after selection a post.
 class PostDetailViewController: UIViewController {
     // MARK: - Properties
-    let detailViewSignal = CurrentValueSubject<PostDetailViewModel?, Never>.init(nil)
-    var detailPageManager: DetailPageManager?
+    var detailPageManager: DetailPageManager = DetailPageManager(detailControllerSignal: .init(nil))
     var viewModel: PostDetailViewModel?
     var observations = Set<AnyCancellable>()
     
@@ -37,10 +36,9 @@ class PostDetailViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        detailPageManager = DetailPageManager(detailControllerSignal: detailViewSignal)
         setupSubscription()
-        if let id = detailViewSignal.value?.post.postId {
-            detailPageManager?.fetchDetailPageData(id: String(id))
+        if let id = detailPageManager.detailControllerSignal.value?.post.postId {
+            detailPageManager.fetchDetailPageData(id: String(id))
         }
         self.view.backgroundColor = .systemBlue
         tableView.delegate = self
@@ -56,7 +54,7 @@ class PostDetailViewController: UIViewController {
     // MARK: - Instance Methods
     func setupSubscription() {
         observations.removeAll()
-        detailViewSignal.dropFirst().sink(receiveValue: { [weak self] viewModel in
+        detailPageManager.detailControllerSignal.dropFirst().sink(receiveValue: { [weak self] viewModel in
             guard let self = self,
                   let viewModel = viewModel,
                   !viewModel.comments.isEmpty else { return }
@@ -125,7 +123,7 @@ extension PostDetailViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard indexPath.row == 1, let viewModel = viewModel else { return }
         let authorsViewController = AuthorInfoViewController()
-        authorsViewController.authorsViewControllerSignal.send(.init(photos: [], author: viewModel.author))
+        authorsViewController.authorInfoPageManager.authorViewControllerSignal.send(.init(photos: [], author: viewModel.author))
         navigationController?.pushViewController(authorsViewController, animated: true)
     }
 }

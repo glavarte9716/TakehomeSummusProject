@@ -21,9 +21,8 @@ class AuthorInfoViewController: UIViewController {
 
     // MARK: - Properties
     // Signal used to pass information from the upstream service.
-    let authorsViewControllerSignal = CurrentValueSubject<AuthorInfoViewModel?, Never>.init(nil)
     var viewModel: AuthorInfoViewModel?
-    var authorInfoPageManager: AuthorInfoPageManager?
+    var authorInfoPageManager: AuthorInfoPageManager = AuthorInfoPageManager(authorViewControllerSignal: .init(nil))
     var observations = Set<AnyCancellable>()
     
     // MARK: - UI Elements
@@ -32,11 +31,10 @@ class AuthorInfoViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        authorInfoPageManager = AuthorInfoPageManager(authorViewControllerSignal: authorsViewControllerSignal)
         setupSubscription()
         
-        if let id = authorsViewControllerSignal.value?.author.authorId {
-            authorInfoPageManager?.fetchPhotosForAuthorId(id: String(id))
+        if let id = authorInfoPageManager.authorViewControllerSignal.value?.author.authorId {
+            authorInfoPageManager.fetchPhotosForAuthorId(id: String(id))
         }
         
         setupUI()
@@ -47,7 +45,7 @@ class AuthorInfoViewController: UIViewController {
     func setupSubscription() {
         observations.removeAll()
         
-        authorsViewControllerSignal.sink(receiveValue: { [weak self] model in
+        authorInfoPageManager.authorViewControllerSignal.sink(receiveValue: { [weak self] model in
             guard let self = self, let model = model else { return }
             self.configureWithModel(model: model)
         }).store(in: &observations)

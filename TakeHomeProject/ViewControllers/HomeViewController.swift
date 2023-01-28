@@ -28,7 +28,6 @@ class HomeViewController: UIViewController {
 
     // MARK: - Properties
     // Signal used to pass information from the upstream service.
-    let homeViewControllerSignal = CurrentValueSubject<HomeViewModel, Never>.init(.init(posts: [], authors: []))
     var homePageManager: HomePageManager?
     var viewModel: HomeViewModel?
     var observations = Set<AnyCancellable>()
@@ -45,7 +44,7 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        homePageManager = HomePageManager(homeViewControllerSignal: homeViewControllerSignal)
+        homePageManager = HomePageManager(homeViewControllerSignal: .init(.init(posts: [], authors: [])))
         setupSubscription()
         homePageManager?.fetchHomePageData()
         tableView.delegate = self
@@ -74,7 +73,7 @@ class HomeViewController: UIViewController {
     /// Sets up the subscription for the current value subject that receives the upstream data.
     func setupSubscription() {
         observations.removeAll()
-        homeViewControllerSignal.dropFirst().sink(receiveValue: { [weak self] viewModel in
+        homePageManager?.homeViewControllerSignal.dropFirst().sink(receiveValue: { [weak self] viewModel in
             guard let self = self,
                   !viewModel.authors.isEmpty,
                   !viewModel.posts.isEmpty else { return }
@@ -120,7 +119,7 @@ extension HomeViewController: UITableViewDelegate, UITableViewDataSource {
             return
         }
         let postDetailViewController = PostDetailViewController()
-        postDetailViewController.detailViewSignal.send(.init(comments: [], post: post, author: author))
+        postDetailViewController.detailPageManager.detailControllerSignal.send(.init(comments: [], post: post, author: author))
         navigationController?.pushViewController(postDetailViewController, animated: true)
     }
 }
