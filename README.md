@@ -1,7 +1,9 @@
 # TakehomeSummusProject
 Thank you for taking the time to look at my version of your project.
-Full disclosure, I put over 10 hours of effort into this mostly due to the constraints, the planning of my architecture, and trial and error.
-I had never made an entire app with no storyboards, and I have never used SwiftUI. I enjoyed stepping out of my comfort zone, but forgive me that I did not have time to think about style or design, which is something I usually put more thought into. I hope to discuss more! :)
+Full disclosure, I put over 10 hours(with breaks) into this mostly due to the constraints, which is expected.
+I had never made an entire app with no storyboards, and I have never used SwiftUI. I enjoyed stepping out of my comfort zone, 
+but forgive that I did not have time to think about style or design as much, which is something I usually put more thought into. 
+I hope to discuss more! :)
 
 Installation:
 
